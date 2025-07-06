@@ -61,7 +61,7 @@
 
   <div id="instructions">
     <p><span class="color blue">Blue ball</span>: Tap or press space <strong>once</strong></p>
-    <p><span class="color red">Red ball</span>: Tap or press space <strong>twice quickly</strong></p>
+    <p><span class="color red">Red ball</span>: Press space <strong>twice quickly</strong></p>
     <p><span class="color green">Green ball</span>: <strong>Do nothing!</strong></p>
   </div>
 
@@ -176,58 +176,64 @@
     let lastTapTime = 0;
     let tapTimeout = null;
 
-    function isExpectingDouble() {
-      return activeBall && activeBall.color === "red";
-    }
-
     document.addEventListener("keydown", (e) => {
       if (e.code === "Space" && !gameOver) {
         const now = Date.now();
         if (now - lastTapTime < 300) {
           clearTimeout(tapTimeout);
+          tapTimeout = null;
           handleInput("double");
         } else {
           tapTimeout = setTimeout(() => {
-            // Only handle "single" if not expecting double (i.e., not red)
-            if (!isExpectingDouble()) handleInput("single");
+            if (activeBall && activeBall.color !== "red") {
+              handleInput("single");
+            }
+            tapTimeout = null;
           }, 300);
         }
         lastTapTime = now;
       }
     });
 
-    canvas.addEventListener("click", (e) => {
+    canvas.addEventListener("click", () => {
       if (!gameOver) {
         const now = Date.now();
         if (now - lastTapTime < 300) {
           clearTimeout(tapTimeout);
+          tapTimeout = null;
           handleInput("double");
         } else {
           tapTimeout = setTimeout(() => {
-            if (!isExpectingDouble()) handleInput("single");
+            if (activeBall && activeBall.color !== "red") {
+              handleInput("single");
+            }
+            tapTimeout = null;
           }, 300);
         }
         lastTapTime = now;
       }
     });
 
-    canvas.addEventListener("touchstart", (e) => {
+    canvas.addEventListener("touchstart", () => {
       if (!gameOver) {
         const now = Date.now();
         if (now - lastTapTime < 300) {
           clearTimeout(tapTimeout);
+          tapTimeout = null;
           handleInput("double");
         } else {
           tapTimeout = setTimeout(() => {
-            if (!isExpectingDouble()) handleInput("single");
+            if (activeBall && activeBall.color !== "red") {
+              handleInput("single");
+            }
+            tapTimeout = null;
           }, 300);
         }
         lastTapTime = now;
       }
     });
 
-    restartBtn.addEventListener("click", (e) => {
-      e.stopPropagation();
+    restartBtn.addEventListener("click", () => {
       score = 0;
       misses = 0;
       gameOver = false;

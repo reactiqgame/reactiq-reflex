@@ -176,6 +176,10 @@
     let lastTapTime = 0;
     let tapTimeout = null;
 
+    function isExpectingDouble() {
+      return activeBall && activeBall.color === "red";
+    }
+
     document.addEventListener("keydown", (e) => {
       if (e.code === "Space" && !gameOver) {
         const now = Date.now();
@@ -183,7 +187,10 @@
           clearTimeout(tapTimeout);
           handleInput("double");
         } else {
-          tapTimeout = setTimeout(() => handleInput("single"), 300);
+          tapTimeout = setTimeout(() => {
+            // Only handle "single" if not expecting double (i.e., not red)
+            if (!isExpectingDouble()) handleInput("single");
+          }, 300);
         }
         lastTapTime = now;
       }
@@ -196,7 +203,9 @@
           clearTimeout(tapTimeout);
           handleInput("double");
         } else {
-          tapTimeout = setTimeout(() => handleInput("single"), 300);
+          tapTimeout = setTimeout(() => {
+            if (!isExpectingDouble()) handleInput("single");
+          }, 300);
         }
         lastTapTime = now;
       }
@@ -209,7 +218,9 @@
           clearTimeout(tapTimeout);
           handleInput("double");
         } else {
-          tapTimeout = setTimeout(() => handleInput("single"), 300);
+          tapTimeout = setTimeout(() => {
+            if (!isExpectingDouble()) handleInput("single");
+          }, 300);
         }
         lastTapTime = now;
       }

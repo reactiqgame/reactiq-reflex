@@ -8,9 +8,9 @@
     body {
       font-family: Arial, sans-serif;
       text-align: center;
-      margin: 0;
       background-color: #111;
       color: white;
+      margin: 0;
     }
     canvas {
       background-color: #222;
@@ -60,8 +60,8 @@
   <button id="restart" style="display:none;">Restart</button>
 
   <div id="instructions">
-    <p><span class="color blue">Blue ball</span>: Tap the screen or press the space bar <strong>once</strong></p>
-    <p><span class="color red">Red ball</span>: Tap the screen or press the space bar <strong>twice quickly</strong></p>
+    <p><span class="color blue">Blue ball</span>: Tap or press space <strong>once</strong></p>
+    <p><span class="color red">Red ball</span>: Tap or press space <strong>twice quickly</strong></p>
     <p><span class="color green">Green ball</span>: <strong>Do nothing!</strong></p>
   </div>
 
@@ -87,9 +87,9 @@
 
     const speedOptions = {
       easy:    [1.5, 2, 2.5, 3, 3.5, 4],
-      medium:  [2.5, 3.5, 4.5, 5.5, 6.5, 7.5],
-      hard:    [4, 5.5, 7, 8.5, 10, 11.5],
-      extreme: [6, 8, 10, 12, 14, 16]
+      medium:  [3, 4.5, 5.5, 6.5, 7.5, 8.5],
+      hard:    [5.5, 7, 8.5, 10, 11.5, 13],
+      extreme: [7, 9.5, 12, 14.5, 17, 20]
     };
 
     function randomColor() {
@@ -103,7 +103,7 @@
     }
 
     function spawnBall() {
-      const ball = {
+      activeBall = {
         x: -20,
         y: canvas.height / 2,
         radius: 15,
@@ -111,7 +111,6 @@
         color: randomColor(),
         responded: false
       };
-      activeBall = ball;
     }
 
     function drawBall(ball) {
@@ -137,10 +136,6 @@
             misses++;
           }
         }
-        if (score > highScore) {
-          highScore = score;
-          localStorage.setItem("highScore", highScore);
-        }
         checkGameOver();
         activeBall = null;
       }
@@ -165,22 +160,12 @@
 
     function handleInput(type) {
       if (!activeBall || activeBall.responded || gameOver) return;
-
       const expected = activeBall.color === "blue" ? "single"
-                    : activeBall.color === "red" ? "double"
-                    : "none";
-
-      if ((type === expected && expected !== "none")) {
+                      : activeBall.color === "red" ? "double"
+                      : "none";
+      if ((type === expected && expected !== "none") || (expected === "none" && type === "none")) {
         score++;
         activeBall.responded = true;
-        if (score > highScore) {
-          highScore = score;
-          localStorage.setItem("highScore", highScore);
-        }
-      } else if (expected === "none" && type === "none") {
-        // This case is handled in update() when the ball leaves the screen
-        // No need to increment score here
-        return;
       } else {
         misses++;
         checkGameOver();
@@ -188,37 +173,50 @@
       }
     }
 
-    let lastTap = 0;
+    let lastTapTime = 0;
+    let tapTimeout = null;
 
     document.addEventListener("keydown", (e) => {
       if (e.code === "Space" && !gameOver) {
         const now = Date.now();
-        if (now - lastTap < 300) {
+        if (now - lastTapTime < 300) {
+          clearTimeout(tapTimeout);
           handleInput("double");
         } else {
-          handleInput("single");
+          tapTimeout = setTimeout(() => handleInput("single"), 300);
         }
-        lastTap = now;
+        lastTapTime = now;
       }
     });
 
-    canvas.addEventListener("click", () => {
-      if (!gameOver) handleInput("single");
-    });
-
-    canvas.addEventListener("touchstart", () => {
-      const now = Date.now();
+    canvas.addEventListener("click", (e) => {
       if (!gameOver) {
-        if (now - lastTap < 300) {
+        const now = Date.now();
+        if (now - lastTapTime < 300) {
+          clearTimeout(tapTimeout);
           handleInput("double");
         } else {
-          handleInput("single");
+          tapTimeout = setTimeout(() => handleInput("single"), 300);
         }
+        lastTapTime = now;
       }
-      lastTap = now;
     });
 
-    restartBtn.addEventListener("click", () => {
+    canvas.addEventListener("touchstart", (e) => {
+      if (!gameOver) {
+        const now = Date.now();
+        if (now - lastTapTime < 300) {
+          clearTimeout(tapTimeout);
+          handleInput("double");
+        } else {
+          tapTimeout = setTimeout(() => handleInput("single"), 300);
+        }
+        lastTapTime = now;
+      }
+    });
+
+    restartBtn.addEventListener("click", (e) => {
+      e.stopPropagation();
       score = 0;
       misses = 0;
       gameOver = false;
@@ -228,24 +226,30 @@
       difficultyMenu.style.display = "none";
       canvas.style.display = "block";
       scoreText.style.display = "block";
-      highScore = localStorage.getItem("highScore") || 0;
       scoreText.textContent = `Score: 0 | High Score: ${highScore}`;
       update();
     });
 
     startGameBtn.addEventListener("click", () => {
-      currentDifficulty = difficultySelector.value;
-      difficultyMenu.style.display = "none";
-      canvas.style.display = "block";
-      scoreText.style.display = "block";
       score = 0;
       misses = 0;
       gameOver = false;
       activeBall = null;
+      currentDifficulty = difficultySelector.value;
       gameOverText.style.display = "none";
+      restartBtn.style.display = "none";
+      difficultyMenu.style.display = "none";
+      canvas.style.display = "block";
+      scoreText.style.display = "block";
+      scoreText.textContent = `Score: 0 | High Score: ${highScore}`;
       update();
     });
 
-    </script>
+    update();
+  </script>
+
+  <footer style="margin: 30px 0 10px 0; color: #888; font-size: 16px;">
+    &copy; 2025 ReflexForge
+  </footer>
 </body>
 </html>

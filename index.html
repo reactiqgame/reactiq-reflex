@@ -184,12 +184,12 @@
           tapTimeout = null;
           handleInput("double");
         } else {
-          tapTimeout = setTimeout(() => {
-            if (activeBall && activeBall.color !== "red") {
+          if (activeBall && activeBall.color !== "red") {
+            tapTimeout = setTimeout(() => {
               handleInput("single");
-            }
-            tapTimeout = null;
-          }, 300);
+              tapTimeout = null;
+            }, 300);
+          }
         }
         lastTapTime = now;
       }
@@ -203,12 +203,12 @@
           tapTimeout = null;
           handleInput("double");
         } else {
-          tapTimeout = setTimeout(() => {
-            if (activeBall && activeBall.color !== "red") {
+          if (activeBall && activeBall.color !== "red") {
+            tapTimeout = setTimeout(() => {
               handleInput("single");
-            }
-            tapTimeout = null;
-          }, 300);
+              tapTimeout = null;
+            }, 300);
+          }
         }
         lastTapTime = now;
       }
@@ -222,12 +222,12 @@
           tapTimeout = null;
           handleInput("double");
         } else {
-          tapTimeout = setTimeout(() => {
-            if (activeBall && activeBall.color !== "red") {
+          if (activeBall && activeBall.color !== "red") {
+            tapTimeout = setTimeout(() => {
               handleInput("single");
-            }
-            tapTimeout = null;
-          }, 300);
+              tapTimeout = null;
+            }, 300);
+          }
         }
         lastTapTime = now;
       }
@@ -256,17 +256,4 @@
       gameOverText.style.display = "none";
       restartBtn.style.display = "none";
       difficultyMenu.style.display = "none";
-      canvas.style.display = "block";
-      scoreText.style.display = "block";
-      scoreText.textContent = `Score: 0 | High Score: ${highScore}`;
-      update();
-    });
-
-    update();
-  </script>
-
-  <footer style="margin: 40px 0 20px 0; color: #fff; font-size: 18px; letter-spacing: 1px;">
-    &copy; 2025 ReflexForge
-  </footer>
-</body>
-</html>
+      canvas.style.display = "block

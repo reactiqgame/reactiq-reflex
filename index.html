@@ -4,6 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>ReactiQ</title>
+  <link rel="icon" type="image/png" href="favicon.png" />
   <style>
     body {
       font-family: Arial, sans-serif;
@@ -61,7 +62,7 @@
 
   <div id="instructions">
     <p><span class="color blue">Blue ball</span>: Tap or press space <strong>once</strong></p>
-    <p><span class="color red">Red ball</span>: Press space <strong>twice quickly</strong></p>
+    <p><span class="color red">Red ball</span>: Tap or press space <strong>twice quickly</strong></p>
     <p><span class="color green">Green ball</span>: <strong>Do nothing!</strong></p>
   </div>
 
@@ -181,59 +182,42 @@
         const now = Date.now();
         if (now - lastTapTime < 300) {
           clearTimeout(tapTimeout);
-          tapTimeout = null;
           handleInput("double");
         } else {
-          if (activeBall && activeBall.color !== "red") {
-            tapTimeout = setTimeout(() => {
-              handleInput("single");
-              tapTimeout = null;
-            }, 300);
-          }
+          tapTimeout = setTimeout(() => handleInput("single"), 300);
         }
         lastTapTime = now;
       }
     });
 
-    canvas.addEventListener("click", () => {
+    canvas.addEventListener("click", (e) => {
       if (!gameOver) {
         const now = Date.now();
         if (now - lastTapTime < 300) {
           clearTimeout(tapTimeout);
-          tapTimeout = null;
           handleInput("double");
         } else {
-          if (activeBall && activeBall.color !== "red") {
-            tapTimeout = setTimeout(() => {
-              handleInput("single");
-              tapTimeout = null;
-            }, 300);
-          }
+          tapTimeout = setTimeout(() => handleInput("single"), 300);
         }
         lastTapTime = now;
       }
     });
 
-    canvas.addEventListener("touchstart", () => {
+    canvas.addEventListener("touchstart", (e) => {
       if (!gameOver) {
         const now = Date.now();
         if (now - lastTapTime < 300) {
           clearTimeout(tapTimeout);
-          tapTimeout = null;
           handleInput("double");
         } else {
-          if (activeBall && activeBall.color !== "red") {
-            tapTimeout = setTimeout(() => {
-              handleInput("single");
-              tapTimeout = null;
-            }, 300);
-          }
+          tapTimeout = setTimeout(() => handleInput("single"), 300);
         }
         lastTapTime = now;
       }
     });
 
-    restartBtn.addEventListener("click", () => {
+    restartBtn.addEventListener("click", (e) => {
+      e.stopPropagation();
       score = 0;
       misses = 0;
       gameOver = false;
@@ -256,4 +240,13 @@
       gameOverText.style.display = "none";
       restartBtn.style.display = "none";
       difficultyMenu.style.display = "none";
-      canvas.style.display = "block
+      canvas.style.display = "block";
+      scoreText.style.display = "block";
+      scoreText.textContent = `Score: 0 | High Score: ${highScore}`;
+      update();
+    });
+
+    update();
+  </script>
+</body>
+</html>
